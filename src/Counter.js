@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from 'material-ui/Button';
 
 class Counter extends React.Component {
 
@@ -16,8 +17,8 @@ class Counter extends React.Component {
     return (<div>
       {this.state.counter}
       <hr/>
-      <button onClick={this.increment}>+</button>
-      <button onClick={this.decrement}>-</button>
+      <Button variant="raised" color="primary" onClick={this.increment}>+</Button>&nbsp;
+      <Button variant="raised" color="primary"  onClick={this.decrement}>-</Button>
     </div>);
   }
 }

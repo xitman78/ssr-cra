@@ -25,7 +25,7 @@ const NoMatch = () => (
 class App extends Component {
 
   componentDidMount() {
-    console.log('Component mounted!!!');
+    console.log('App Component mounted!!!');
   }
 
   render() {
