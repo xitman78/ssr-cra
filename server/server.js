@@ -4,7 +4,7 @@ import express from 'express';
 
 import App from '../src/App.js';
 
-import { renderToNodeStream, renderToString }  from 'react-dom/server';
+import { renderToNodeStream }  from 'react-dom/server';
 
 const app = new express();
 
@@ -17,14 +17,15 @@ app.get('/', (req, res) => {
   fs.readFile(__dirname + '/../build/index.html', 'utf8', function(err, data) {
     if (err) throw err;
 
-    let [begining, end] = data.split("<div id=\"root\"></div>");
+    let [ begining, end ] = data.split("<div id=\"root\">");
+
+    if (!begining) throw "Invalid index.html";
 
     res.write(begining);
     res.write("<div id='root'>");
     const stream = renderToNodeStream(<App/>);
     stream.pipe(res, { end: false });
     stream.on('end', () => {
-      res.write("</div>");
       res.write(end);
       res.end();
     });
