@@ -1,5 +1,4 @@
 import React from 'react';
-import fs from 'fs';
 import express from 'express';
 
 import { renderToNodeStream, renderToString }  from 'react-dom/server';
@@ -7,7 +6,7 @@ import { StaticRouter } from 'react-router';
 
 import { SheetsRegistry } from 'react-jss/lib/jss';
 import JssProvider from 'react-jss/lib/JssProvider';
-import { MuiThemeProvider, createMuiTheme, createGenerateClassName } from 'material-ui/styles';
+import { MuiThemeProvider, createGenerateClassName } from 'material-ui/styles';
 
 import App from '../src/App.js';
 
@@ -21,43 +20,57 @@ app.use('/favicon.ico', express.static(__dirname + '/../build/favicon.ico'));
 
 app.get('*', (req, res) => {
 
-  fs.readFile(__dirname + '/../build/index.html', 'utf8', function(err, data) {
-    if (err) throw err;
+  const assets = require(__dirname + '/../build/asset-manifest.json');
 
-    const context = {};
+  // console.log('assets', assets);
 
-    const sheetsRegistry = new SheetsRegistry();
+  const context = {};
 
-    const generateClassName = createGenerateClassName();
+  const sheetsRegistry = new SheetsRegistry();
 
-    let [ begining, end ] = data.split("<div id=\"root\"></div>");
+  const generateClassName = createGenerateClassName();
 
-    if (!begining) throw "Invalid index.html";
+  const  begining =
+`<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <title>React App</title>
+    <link href="${assets['main.css']}" rel="stylesheet">
+</head>
+<body><noscript>You need to enable JavaScript to run this app.</noscript>
+<div id="root">`;
 
-    res.write(begining);
-    res.write("<div id=\"root\">");
+    const end =
+`<script type="text/javascript" src="${assets['main.js']}">
+</script>
+</body>
+</html>`;
 
-    const stream = renderToNodeStream(
-      <StaticRouter location={req.url} context={context}>
-        <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
-          <MuiThemeProvider theme={theme} sheetsManager={new Map()}>
-            <App />
-          </MuiThemeProvider>
-        </JssProvider>
-      </StaticRouter>
-    );
+  res.write(begining);
 
-    stream.pipe(res, { end: false });
+  const stream = renderToNodeStream(
+    <StaticRouter location={req.url} context={context}>
+      <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
+        <MuiThemeProvider theme={theme} sheetsManager={new Map()}>
+          <App />
+        </MuiThemeProvider>
+      </JssProvider>
+    </StaticRouter>
+  );
 
-    stream.on('end', () => {
-        const css = sheetsRegistry.toString();
-        console.log('sheetsRegistry', sheetsRegistry);
-        res.write(`</div><style id="jss-server-side">${css}</style>`);
-        res.write(end);
-        res.end();
-   });
+  stream.pipe(res, { end: false });
 
-  });
+  stream.on('end', () => {
+      const css = sheetsRegistry.toString();
+      res.write(`</div><style id="jss-server-side">${css}</style>`);
+      res.write(end);
+      res.end();
+ });
+
 
 });
 
