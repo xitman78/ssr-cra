@@ -1,26 +1,21 @@
 import React from 'react';
 import Button from 'material-ui/Button';
+import {connect} from 'react-redux';
 
-class Counter extends React.Component {
+const Counter = ({counter, increment, decrement}) => (
+  <div>
+    {counter}
+    <hr/>
+    <Button variant="raised" color="primary" onClick={increment}>+</Button>&nbsp;
+    <Button variant="raised" color="primary"  onClick={decrement}>-</Button>
+  </div>
+);
 
-  state = {counter: 0};
 
-  increment = () => {
-    this.setState({counter: this.state.counter + 1});
-  };
-
-  decrement = () => {
-    this.setState({counter: this.state.counter - 1});
-  };
-
-  render() {
-    return (<div>
-      {this.state.counter}
-      <hr/>
-      <Button variant="raised" color="primary" onClick={this.increment}>+</Button>&nbsp;
-      <Button variant="raised" color="primary"  onClick={this.decrement}>-</Button>
-    </div>);
+export default connect(state => ({
+  counter: state.counter
+}), {
+    increment: () => ({type: 'INCREMENT'}),
+    decrement: () => ({type: 'DECREMENT'}),
   }
-}
-
-export default Counter;
+)(Counter);

@@ -5,6 +5,10 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { render, hydrate } from "react-dom";
 
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import counterApp from './reducers';
+
 import './index.css';
 import App from './App';
 import theme from './theme';
@@ -25,5 +29,13 @@ class Main extends React.Component {
   }
 }
 
+const preloadedState = window.__PRELOADED_STATE__;
 
-hydrate(<MuiThemeProvider theme={theme}><BrowserRouter><Main /></BrowserRouter></MuiThemeProvider>, document.getElementById('root'));
+// Allow the passed state to be garbage-collected
+delete window.__PRELOADED_STATE__;
+
+// Create Redux store with initial state
+const store = createStore(counterApp, preloadedState);
+
+
+hydrate(<BrowserRouter><MuiThemeProvider theme={theme}><Provider store={store}><Main /></Provider></MuiThemeProvider></BrowserRouter>, document.getElementById('root'));
