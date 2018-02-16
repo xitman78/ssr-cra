@@ -3,10 +3,12 @@ import Button from 'material-ui/Button';
 import {connect} from 'react-redux';
 import { Helmet } from 'react-helmet';
 
+import { routes } from './routes';
+
 const Counter = ({counter, increment, decrement}) => (
   <div>
     <Helmet>
-      <title>Counter::SSR App</title>
+      <title>{routes['/counter'].title}</title>
     </Helmet>
     {counter}
     <hr/>

@@ -5,6 +5,7 @@ import {
   Switch,
 } from "react-router-dom";
 import { Helmet } from 'react-helmet';
+import { routes } from './routes';
 
 import './App.css';
 
@@ -18,6 +19,9 @@ const Home = () => (
 
 const NoMatch = () => (
   <p className="App-intro">
+      <Helmet>
+          <title>{routes['404'].title}</title>
+      </Helmet>
       Not found!!!
   </p>
 );
@@ -33,7 +37,7 @@ class App extends Component {
     return (
         <div className="App">
           <Helmet>
-              <title>SSR App</title>
+              <title>{routes['/'].title}</title>
               <meta name="Server Side Render App" content="React Application" />
           </Helmet>
           <header className="App-header">

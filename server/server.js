@@ -1,20 +1,17 @@
 import React from 'react';
 import express from 'express';
-
 import { renderToNodeStream, renderToString }  from 'react-dom/server';
 import { StaticRouter } from 'react-router';
-
 import { SheetsRegistry } from 'react-jss/lib/jss';
 import JssProvider from 'react-jss/lib/JssProvider';
 import { MuiThemeProvider, createGenerateClassName } from 'material-ui/styles';
-
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+
 import counterApp from '../src/reducers';
-
 import App from '../src/App.js';
-
 import theme from '../src/theme';
+import getRouteMeta from '../src/routes';
 
 const app = new express();
 
@@ -26,7 +23,7 @@ app.get('*', (req, res) => {
 
   const assets = require(__dirname + '/../build/asset-manifest.json');
 
-  // console.log('assets', assets);
+  console.log('req.url', req.url);
 
   const context = {};
 
@@ -44,7 +41,7 @@ app.get('*', (req, res) => {
     <meta name="theme-color" content="#000000">
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title>React App</title>
+    <title>${getRouteMeta(req.url).title}</title>
     <link href="${assets['main.css']}" rel="stylesheet">
 </head>
 <body><noscript>You need to enable JavaScript to run this app.</noscript>
@@ -67,6 +64,7 @@ app.get('*', (req, res) => {
   stream.pipe(res, { end: false });
 
   stream.on('end', () => {
+
     const css = sheetsRegistry.toString();
 
     const preloadedState = store.getState();
