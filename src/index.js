@@ -38,4 +38,13 @@ delete window.__PRELOADED_STATE__;
 const store = createStore(counterApp, preloadedState);
 
 
-hydrate(<BrowserRouter><MuiThemeProvider theme={theme}><Provider store={store}><Main /></Provider></MuiThemeProvider></BrowserRouter>, document.getElementById('root'));
+hydrate(
+<BrowserRouter>
+  <MuiThemeProvider theme={theme}>
+    <Provider store={store}>
+      <Main />
+    </Provider>
+  </MuiThemeProvider>
+</BrowserRouter>
+,
+document.getElementById('root'));

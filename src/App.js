@@ -4,6 +4,7 @@ import {
   Link,
   Switch,
 } from "react-router-dom";
+import { Helmet } from 'react-helmet';
 
 import './App.css';
 
@@ -31,6 +32,10 @@ class App extends Component {
     console.log('render');
     return (
         <div className="App">
+          <Helmet>
+              <title>SSR App</title>
+              <meta name="Server Side Render App" content="React Application" />
+          </Helmet>
           <header className="App-header">
             <img src="/static/media/logo.svg" className="App-logo" alt="logo" />
             <h1 className="App-title">Welcome to React</h1>
